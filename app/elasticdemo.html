@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en" ng-app="elasticDemo" ng-controller="SearchController">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>CollabIP Demo</title>
+
+        <link rel="stylesheet" href="bower_components/html5-boilerplate/css/normalize.css">
+        <link rel="stylesheet" href="bower_components/html5-boilerplate/css/main.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+        <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
+
+            <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+            <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+            <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    </head>
+
+    <body>
+            <!--<div class="navbar navbar-fixed-top" role="navigation">-->
+            <!--<div>-->
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="navbar-header">
+                        <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>-->
+                    <a class="navbar-brand" style="color : #666" href="#"><img src="img/STAR_System_small.png">&nbsp;&nbsp;&nbsp;</a>
+                </div>
+            </div>
+        </div>
+            <!--</div>-->        <br><br><hr>
+
+        <div class="container-fluid">
+
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3>CollabIP-Elastic Demo</h3>
+
+                    <form class="form-inline" role="form">
+                        <div class="row-fluid form-group">
+
+                            <div class="span12">
+                                <span class="label label-success">Searchable Field</span>
+                                <i>(This label denotes a free text searchable field)</i>
+                            </div>
+                        </div>
+                        <p></p>
+                        <div class="row-fluid">
+                            <div class="span9">
+                                <input type="text"
+                                class="form-control"
+                                id="search"
+                                placeholder="Enter your search terms"
+                                ng-model="query"
+                                style="width : 50 %" size="130">
+                                    <!--suggest="/suggest/wfhm/" >-->
+                                <button type="submit" ng-click="search(0,'select')" class="btn btn-primary">Search</button>
+                            </div>
+                            <div class="span3">
+                                <button type="submit" ng-click="bellQuestionConcepts(results.clusters)"
+                                tooltip="{{ 'Find Concepts' }}"
+                                tooltip-placement="left" class="btn btn-info">Find Concepts</button>
+                            </div>
+                        </div>
+                        <p></p>
+                        <div class="row-fluid">
+                            <div class="span9">
+                                <input type="text"
+                                class="form-control"
+                                id="similarity"
+                                placeholder="Enter text to analyze"
+                                ng-model="querysimilarity"
+                                style="width : 50 %" size="130">
+                                    <!--suggest="/suggest/wfhm/" >-->
+                                <button type="submit" ng-click="search(0,'mlt-stream')" class="btn btn-primary">Statistical Similarity</button>
+                            </div>
+                            <div class="span3">
+                                <button type="submit" ng-click="bellQuestionInvestigate(results.response)"
+                                tooltip="{{ 'Investigate' }}"
+                                tooltip-placement="left" class="btn btn-info">Investigate Results</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p>Found <em>{{results.hits.total | number}}</em> results</p>
+                </div>
+            </div><br>
+
+            <div class="row-fluid">
+                <div class="span2">
+                    <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Document Number</h4>
+                    </div>
+                    <div class="panel-body">
+                        <ol class="list-unstyled">
+                            <li ng-if="! isApplied('part_no_ss', entry)" ng-repeat="entry in results.facet_counts.facet_fields['part_no_ss']  track by $index"
+                            ng-show="$index % 2 == 0"><a href="#" ng-click="filterSearch('part_no_ss', entry)">{{entry}} </a>
+                                ({{results.facet_counts.facet_fields["part_no_ss"][$index+1] | number}})</li>
+
+                            <li ng-if="isApplied('part_no_ss', entry)" ng-repeat="entry in results.facet_counts.facet_fields['part_no_ss']  track by $index"
+                            ng-show="$index % 2 == 0">
+                                {{entry}}<a href="#" ng-click="filterSearch('part_no_ss', entry)">&nbsp;<i class="fa fa-times"></i></a></li>
+                        </ol>
+                    </div>
+                    </div>
+
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Document Type</h4>
+                        </div>
+                        <div class="panel-body">
+                            <ol class="list-unstyled">
+                                <li ng-if="! isApplied('CUST_NO', entry)" ng-repeat="entry in results.facet_counts.facet_fields['CUST_NO']  track by $index"
+                                ng-show="$index % 2 == 0"><a href="#" ng-click="filterSearch('CUST_NO', entry)">{{entry}} </a>
+                                    ({{results.facet_counts.facet_fields["CUST_NO"][$index+1] | number}})</li>
+
+                                <li ng-if="isApplied('CUST_NO', entry)" ng-repeat="entry in results.facet_counts.facet_fields['CUST_NO']  track by $index"
+                                ng-show="$index % 2 == 0">
+                                    {{entry}}<a href="#" ng-click="filterSearch('CUST_NO', entry)">&nbsp;<i class="fa fa-times"></i></a></li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Document Status</h4>
+                        </div>
+                        <div class="panel-body">
+                            <ol class="list-unstyled">
+                                <li ng-if="! isApplied('REQUEST_NO', entry)" ng-repeat="entry in results.facet_counts.facet_fields['REQUEST_NO']  track by $index"
+                                ng-show="$index % 2 == 0"><a href="#" ng-click="filterSearch('REQUEST_NO', entry)">{{entry}} </a>
+                                    ({{results.facet_counts.facet_fields["REQUEST_NO"][$index+1] | number}})</li>
+
+                                <li ng-if="isApplied('REQUEST_NO', entry)" ng-repeat="entry in results.facet_counts.facet_fields['REQUEST_NO']  track by $index"
+                                ng-show="$index % 2 == 0">
+                                    {{entry}}<a href="#" ng-click="filterSearch('REQUEST_NO', entry)">&nbsp;<i class="fa fa-times"></i></a></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <!--<h4><span class="label label-default">Part</span></h4>
+                    <ol class="list-unstyled">
+                        <li ng-if="! isApplied('part_no_ss', entry)" ng-repeat="entry in results.facet_counts.facet_fields['part_no_ss']  track by $index"
+                        ng-show="$index % 2 == 0"><a href="#" ng-click="filterSearch('part_no_ss', entry)">{{entry}} </a>
+                            ({{results.facet_counts.facet_fields["part_no_ss"][$index+1] | number}})</li>
+
+                        <li ng-if="isApplied('part_no_ss', entry)" ng-repeat="entry in results.facet_counts.facet_fields['part_no_ss']  track by $index"
+                        ng-show="$index % 2 == 0">
+                            {{entry}}<a href="#" ng-click="filterSearch('part_no_ss', entry)">&nbsp;<i class="fa fa-times"></i></a></li>
+                    </ol>-->
+                    <!--<h4><span class="label label-default">Customer Number</span></h4>
+                    <ol class="list-unstyled">
+                        <li ng-if="! isApplied('CUST_NO', entry)" ng-repeat="entry in results.facet_counts.facet_fields['CUST_NO']  track by $index"
+                        ng-show="$index % 2 == 0"><a href="#" ng-click="filterSearch('CUST_NO', entry)">{{entry}} </a>
+                            ({{results.facet_counts.facet_fields["CUST_NO"][$index+1] | number}})</li>
+
+                        <li ng-if="isApplied('CUST_NO', entry)" ng-repeat="entry in results.facet_counts.facet_fields['CUST_NO']  track by $index"
+                        ng-show="$index % 2 == 0">
+                            {{entry}}<a href="#" ng-click="filterSearch('CUST_NO', entry)">&nbsp;<i class="fa fa-times"></i></a></li>
+                    </ol>-->
+                    <!--<h4><span class="label label-default">Request Number</span></h4>
+                    <ol class="list-unstyled">
+                        <li ng-if="! isApplied('REQUEST_NO', entry)" ng-repeat="entry in results.facet_counts.facet_fields['REQUEST_NO']  track by $index"
+                        ng-show="$index % 2 == 0"><a href="#" ng-click="filterSearch('REQUEST_NO', entry)">{{entry}} </a>
+                            ({{results.facet_counts.facet_fields["REQUEST_NO"][$index+1] | number}})</li>
+
+                        <li ng-if="isApplied('REQUEST_NO', entry)" ng-repeat="entry in results.facet_counts.facet_fields['REQUEST_NO']  track by $index"
+                        ng-show="$index % 2 == 0">
+                            {{entry}}<a href="#" ng-click="filterSearch('REQUEST_NO', entry)">&nbsp;<i class="fa fa-times"></i></a></li>
+                    </ol>-->
+                        <!--<h4><span class="label label-default">Creator</span></h4>
+                <ol class="list-unstyled">
+                    <li ng-if="! isApplied('creator_ss', entry)" ng-repeat="entry in results.facet_counts.facet_fields.creator_ss  track by $index"
+                        ng-show="$index % 2 == 0"><a href="#" ng-click="filterSearch('creator_ss', entry)">{{entry}} </a> ({{results.facet_counts.facet_fields.creator_ss[$index+1] | number}})</li>
+
+                    <li ng-if="isApplied('creator_ss', entry)" ng-repeat="entry in results.facet_counts.facet_fields.creator_ss  track by $index"
+                        ng-show="$index % 2 == 0">{{entry}}<a href="#" ng-click="filterSearch('creator_ss', entry)">&nbsp;<i class="fa fa-times"></i></a></li>
+                </ol>
+				<br>
+                <h4><span class="label label-default">Message To</span></h4>
+                <ol class="list-unstyled">
+                    <li ng-if="! isApplied('Message-To_ss', entry)" ng-repeat="entry in results.facet_counts.facet_fields['Message-To_ss']  track by $index"
+                    ng-show="$index % 2 == 0"><a href="#" ng-click="filterSearch('Message-To_ss', entry)">{{entry}} </a> ({{results.facet_counts.facet_fields["Message-To_ss"][$index+1] | number}})</li>
+
+                    <li ng-if="isApplied('Message-To_ss', entry)" ng-repeat="entry in results.facet_counts.facet_fields['Message-To_ss']  track by $index"
+                    ng-show="$index % 2 == 0">{{entry}}<a href="#" ng-click="filterSearch('Message-To_ss', entry)">&nbsp;<i class="fa fa-times"></i></a></li>
+                </ol>-->
+                        <!--<div ng-repeat="facet in results.AVAILABLENAVIGATORS | filter:{NAME:'type_id'}">
+				<h4><span class="label label-default">Type ID</span></h4>
+                <ol class="list-unstyled">
+                    <li ng-if="! isApplied('type_id', entry.NAME)" ng-repeat="entry in facet.MODIFIERS track by $index">
+                        <a href="#" ng-click="filterSearch('type_id', entry.NAME)">{{entry.NAME}} </a> ({{entry.COUNT | number}})</li>
+
+                    <li ng-if="isApplied('type_id', entry.NAME)" ng-repeat="entry in facet.MODIFIERS track by $index">
+                        {{entry.NAME}}<a href="#" ng-click="filterSearch('type_id', entry.NAME)">&nbsp;<i class="fa fa-times"></i></a></li>
+                </ol>
+				</div>
+				<br>
+				<div ng-repeat="facet in results.AVAILABLENAVIGATORS | filter:{NAME:'to_audience'}">
+				<h4><span class="label label-default">To Audience</span></h4>
+                <ol class="list-unstyled">
+                    <li ng-if="! isApplied('to_audience', entry.NAME)" ng-repeat="entry in facet.MODIFIERS track by $index">
+                        <a href="#" ng-click="filterSearch('to_audience', entry.NAME)">{{entry.NAME}} </a> ({{entry.COUNT | number}})</li>
+
+                    <li ng-if="isApplied('to_audience', entry.NAME)" ng-repeat="entry in facet.MODIFIERS track by $index">
+                        {{entry.NAME}}<a href="#" ng-click="filterSearch('to_audience', entry.NAME)">&nbsp;<i class="fa fa-times"></i></a></li>
+                </ol>
+				</div>-->
+                        <!--<br>
+				<h4><span class="label label-default">Priority</span></h4>
+				<select ng-model="priority" ng-change="updatePriority()">
+					<option value="UNDEFINED">Any</option>
+					<option value="100 - 1000">100 - 1000</option>
+					<option value="1000 - 5000">1000 - 5000</option>
+					<option value="Above 5000">Above 5000</option>
+				</select>-->
+                </div>
+                <div class="span10">
+                    <table class="table table-striped table-condensed table-hover">
+
+                        <thead>
+                            <tr>
+                                <th><span class="label label-success">Type</span></th>
+                                <!--<th><span class="label label-success">Customer No</span></th>
+                                <th><span class="label label-success">Subject</span></th>-->
+                                    <!--<th><span class="label label-success">Created By</span></th>-->
+                                <!--<th><span class="label label-success">Problem Details</span></th>
+                                <th><span class="label label-info">Similarity Analysis</span></th>-->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="doc in results.hits.hits track by $index">
+                                <td>{{doc["_type"][0]}}</td>
+                                <!--<td>{{doc.CUST_NO[0]}}</td>
+                                <td>{{doc["SUBJECT"][0]}}</td>--
+                                    <!--<td>{{doc.subject_ss[0]}}</td>-->
+                                    <!--<td><span class="label" ng-class="{'label-warning': isAnnouncement, 'label-danger': !isAnnouncement}">{{doc.type_id[0]}}</span></td>
+							<td>{{doc.to_audience[0]}}</td>
+							<td>{{doc.created_by[0]}}</td>-->
+                                <td style="text-align : center">
+                                    <button type="button"
+                                    class="btn btn-default btn-xs"
+                                    ng-click="bellQuestionDetails(doc)"
+                                    tooltip="{{ 'Full Record Details' }}"
+                                    tooltip-placement="left">
+                                            &nbsp;<i class="fa fa-info"></i>&nbsp;</button>
+                                </td>
+                                <td style="text-align : center">
+                                    <button type="button"
+                                    class="btn btn-default btn-xs"
+                                    ng-click="search(0,'mlt-id',doc.id)"
+                                    tooltip="{{ 'Find More Like This' }}"
+                                    tooltip-placement="left">
+                                        More Like This</button>
+                                </td>
+                            </tr>
+                                <!--<tr ng-repeat="doc in results.RESULTS" ng-init="isAnnouncement=doc.TYPE_ID[0]=='announcement'">
+							<td>{{doc.SUBJECT[0]}}</td>
+							<td>{{doc.CREATED_ON[0] | date}}</td>
+							<td>{{doc.EFFECTIVE_FROM_DATE[0] | date}}</td>
+							<td>{{doc.PRIORITY[0]}}</td>
+							<td><span class="label" ng-class="{'label-warning': isAnnouncement, 'label-danger': !isAnnouncement}">{{doc.TYPE_ID[0]}}</span></td>
+							<td>{{doc.TO_AUDIENCE[0]}}</td>
+							<td>{{doc.CREATED_BY[0]}}</td>
+							<td style="text-align:center">
+                                <button type="button"
+                                        class="btn btn-default btn-xs"
+                                        ng-click="details(doc)"
+                                        tooltip="{{ 'Full Record Details' }}"
+                                        tooltip-placement="left">
+                                        &nbsp;<i class="fa fa-info"></i>&nbsp;</button>
+							</td>
+                        </tr>-->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- /.row -->
+            <div class="row-fluid">
+                <div class="span9 offset3">
+                    <ul class="pagination" ng-model="pager">
+                        <li ng-class="pager.prevClass()"><a ng-click="pager.prev()">Prev</a></li>
+                        <li ng-class="pager.pageClass(page)" ng-repeat="page in pager.pages()">
+                            <a ng-click="pager.pageChange(page)">{{page}}</a>
+                        </li>
+                        <li ng-class="pager-nextClass()"><a ng-click="pager.next()">Next</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div><!-- /.container -->
+
+
+            <script src="bower_components/angular/angular.js"></script>
+            <script src="bower_components/angular-route/angular-route.js"></script>
+            <script src="components/version/version.js"></script>
+            <script src="components/version/version-directive.js"></script>
+            <script src="components/version/interpolate-filter.js"></script>
+            <script src="js/app.js"></script>
+            <script src="js/controllers.js"></script>
+            <script src="js/services.js"></script>
+            <script src="bower_components/angular-resource/angular-resource.js"></script>
+            <script src="js/ui-bootstrap-tpls-0.12.1.min.js"></script>
+
+
+    </body>
+</html>
+
