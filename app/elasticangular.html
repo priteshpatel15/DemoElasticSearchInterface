@@ -1,47 +1,43 @@
 <!DOCTYPE html>
+<html>
+<head>
+  <title>Elasticsearch + Angular Example</title>
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css"><link rel="stylesheet" href="bower_components/html5-boilerplate/css/normalize.css">
+    <link rel="stylesheet" href="bower_components/html5-boilerplate/css/main.css">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+    <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
+</head>
+<!-- boot angular with the ExampleApp module -->
+<body ng-app="elasticDemo" ng-controller="ElasticSearchController">
+  <!-- attach the ExampleController to our main content -->
+  <!--<div ng-controller="ElasticSearchController" class="container">
+    <h1>Angular + Elasticsearch</h1>
 
-<html lang="en" ng-app="elasticDemo" ng-controller="SearchController">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>CollabIP Demo</title>
+    <div ng-if="error" class="alert alert-danger" role="alert">{{error.message}}</div>
 
-        <link rel="stylesheet" href="bower_components/html5-boilerplate/css/normalize.css">
-        <link rel="stylesheet" href="bower_components/html5-boilerplate/css/main.css">
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
-        <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
-
-            <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-            <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-            <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    </head>
-
-    <body>
-            <!--<div class="navbar navbar-fixed-top" role="navigation">-->
-            <!--<div>-->
-        <div class="container-fluid">
+    <div ng-if="clusterState" class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Cluster State</h3>
+      </div>
+      <div class="panel-body">
+        <pre>{{clusterState | json}}</pre>
+      </div>
+    </div>
+  </div>-->
+  
+  
+  <div class="container-fluid">
             <div class="row-fluid">
                 <div class="navbar-header">
-                        <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>-->
-                    <a class="navbar-brand" style="color : #666" href="#"><img src="img/STAR_System_small.png">&nbsp;&nbsp;&nbsp;</a>
+                    <a class="navbar-brand" style="color : #666" href="#"><img src="img/tethr.png">&nbsp;&nbsp;&nbsp;</a>
                 </div>
             </div>
         </div>
-            <!--</div>-->        <br><br><hr>
-            
+        <br><br><br><hr>
 
-            
+
+
         <div class="container-fluid">
 
             <div class="row-fluid">
@@ -64,18 +60,18 @@
                                 id="search"
                                 placeholder="Enter your search terms"
                                 ng-model="query"
-                                style="width : 50 %" size="130">
+                                style="width : 50 %" size="110">
                                     <!--suggest="/suggest/wfhm/" >-->
                                 <button type="submit" ng-click="search(0,'select')" class="btn btn-primary">Search</button>
                             </div>
-                            <div class="span3">
+                            <!--<div class="span3">
                                 <button type="submit" ng-click="bellQuestionConcepts(results.clusters)"
                                 tooltip="{{ 'Find Concepts' }}"
                                 tooltip-placement="left" class="btn btn-info">Find Concepts</button>
-                            </div>
+                            </div>-->
                         </div>
                         <p></p>
-                        <div class="row-fluid">
+                        <!--<div class="row-fluid">
                             <div class="span9">
                                 <input type="text"
                                 class="form-control"
@@ -83,7 +79,6 @@
                                 placeholder="Enter text to analyze"
                                 ng-model="querysimilarity"
                                 style="width : 50 %" size="130">
-                                    <!--suggest="/suggest/wfhm/" >-->
                                 <button type="submit" ng-click="search(0,'mlt-stream')" class="btn btn-primary">Statistical Similarity</button>
                             </div>
                             <div class="span3">
@@ -91,7 +86,7 @@
                                 tooltip="{{ 'Investigate' }}"
                                 tooltip-placement="left" class="btn btn-info">Investigate Results</button>
                             </div>
-                        </div>
+                        </div>-->
                     </form>
                     <p>Found <em>{{results.hits.total | number}}</em> results</p>
                 </div>
@@ -298,38 +293,21 @@
                 </div>
             </div>
         </div><!-- /.container -->
-            
-            
-            <div ng-controller="ElasticSearchController" class="container">
-    <h1>Angular + Elasticsearch</h1>
+  
+  
 
-    <!-- if there is an error, display its message -->
-    <div ng-if="error" class="alert alert-danger" role="alert">{{error.message}}</div>
+  <!-- include bower components in proper order -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
+  <script src="components/version/version.js"></script>
+  <script src="components/version/version-directive.js"></script>
+  <script src="components/version/interpolate-filter.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/services.js"></script>
+  <script src="bower_components/angular-resource/angular-resource.js"></script>
+  <script src="js/ui-bootstrap-tpls-0.12.1.min.js"></script>
 
-    <!-- if clusterState is available, display it as formatted json -->
-    <div ng-if="clusterState" class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Cluster State</h3>
-      </div>
-      <div class="panel-body">
-        <pre>{{clusterState | json}}</pre>
-      </div>
-    </div>
-  </div>
-
-            <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
-            <script src="bower_components/angular/angular.js"></script>
-            <script src="bower_components/angular-route/angular-route.js"></script>
-            <script src="components/version/version.js"></script>
-            <script src="components/version/version-directive.js"></script>
-            <script src="components/version/interpolate-filter.js"></script>
-            <script src="js/app.js"></script>
-            <script src="js/controllers.js"></script>
-            <script src="js/services.js"></script>
-            <script src="bower_components/angular-resource/angular-resource.js"></script>
-            <script src="js/ui-bootstrap-tpls-0.12.1.min.js"></script>
-
-
-    </body>
+</body>
 </html>
-
